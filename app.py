@@ -49,7 +49,7 @@ with st.sidebar:
 
 st.markdown("<h3>Ento Explorer App 🐜</h3>", unsafe_allow_html=True)
 
-
+print("GGGGGGGGGG")
 if files is not None:
     txt_files = []
     excel_files = []
