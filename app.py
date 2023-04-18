@@ -1,64 +1,56 @@
-import pandas as pd
-import re
+# import pandas as pd
+# import re
 import streamlit as st
 
-st.write("""
-<style>
-    html, body, [class*="css"]  {
-    }
-    h3 {
-        color: #4267B2;
-        margin-bottom: 24px;
-    }
-    h5 {
-        margin-bottom: 12px;
-    }
-    .date_selected {
-        color: #4267B2;
-    }
+# st.write("""
+# <style>
+#     html, body, [class*="css"]  {
+#     }
+#     h3 {
+#         color: #4267B2;
+#         margin-bottom: 24px;
+#     }
+#     h5 {
+#         margin-bottom: 12px;
+#     }
+#     .date_selected {
+#         color: #4267B2;
+#     }
     
-</style>
-""", unsafe_allow_html=True)
+# </style>
+# """, unsafe_allow_html=True)
 
-SAMPLE_NAME = 'Sample Name'
-GENE_NAME = 'Gene Name'
-POSITION = 'Position'
-CQ = 'Cq'
-TM = 'TM1 (°C)'
-GROUP = 'Group'
-COMMENTS = 'Comments'
+# SAMPLE_NAME = 'Sample Name'
+# GENE_NAME = 'Gene Name'
+# POSITION = 'Position'
+# CQ = 'Cq'
+# TM = 'TM1 (°C)'
+# GROUP = 'Group'
+# COMMENTS = 'Comments'
 
-def sortDataFrameBy(df, col):
-    df['sorted'] = [ord(i[0])*100+int(re.search(r'(\d+)(?!.*\d)',i).group(0)) for i in df[col]]
-    df.sort_values(by='sorted',ascending=True, inplace=True)
-    df.drop('sorted', axis=1, inplace=True)
+# def sortDataFrameBy(df, col):
+#     df['sorted'] = [ord(i[0])*100+int(re.search(r'(\d+)(?!.*\d)',i).group(0)) for i in df[col]]
+#     df.sort_values(by='sorted',ascending=True, inplace=True)
+#     df.drop('sorted', axis=1, inplace=True)
 
-    return df
+#     return df
 
-@st.cache
-def convert_df(df):
-    # IMPORTANT: Cache the conversion to prevent computation on every rerun
-    return df.to_csv(index=False).encode('utf-8')
+# @st.cache
+# def convert_df(df):
+#     # IMPORTANT: Cache the conversion to prevent computation on every rerun
+#     return df.to_csv(index=False).encode('utf-8')
 
-files_path = None
-mask = []
+# files_path = None
+# mask = []
 
-with st.sidebar:
-    st.header('EntoExplorer')
-    files = st.file_uploader("Choose your Files", type=["xls","xlsx","txt"], accept_multiple_files=True)
+# with st.sidebar:
+#     st.header('EntoExplorer')
+#     files = st.file_uploader("Choose your Files", type=["xls","xlsx","txt"], accept_multiple_files=True)
 
-st.markdown("<h3>Ento Explorer App 🐜</h3>", unsafe_allow_html=True)
+# st.markdown("<h3>Ento Explorer App 🐜</h3>", unsafe_allow_html=True)
+st.write("HERE")
 
-
-# df1 = pd.read_csv('data/High Resolution Melting.txt', delimiter = '\t')
-# df2 = pd.read_csv('data/Quality_detection.txt', delimiter = '\t')
-# df3 = pd.read_csv('data/TM_calling.txt', delimiter = '\t')
-
-
-# df = df1.merge((df2.merge(df3, on = POSITION)), on = POSITION)
-
-# st.dataframe(df)
-if files is not None:
+# if files is not None:
     txt_files = []
     excel_files = []
     txt_names = []
