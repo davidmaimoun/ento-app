@@ -26,6 +26,9 @@ POSITION = 'Position'
 CQ = 'Cq'
 TM = 'TM1 (°C)'
 GROUP = 'Group'
+TEST_NAME = "Test Name"
+SAMPLE_TUBE_ID = "SampleTubeID"
+SAMPLE_TUBE_POSITION_ID = "SampleTubePositionID"
 COMMENTS = 'Comments'
 
 def sortDataFrameBy(df, col):
@@ -35,7 +38,6 @@ def sortDataFrameBy(df, col):
 
     return df
 
-@st.cache
 def convert_df(df):
     # IMPORTANT: Cache the conversion to prevent computation on every rerun
     return df.to_csv(index=False).encode('utf-8')
@@ -48,6 +50,7 @@ with st.sidebar:
     files = st.file_uploader("Choose your Files", type=["xls","xlsx","txt"], accept_multiple_files=True)
 
 st.markdown("<h3>Ento Explorer App 🐜</h3>", unsafe_allow_html=True)
+
 
 if files is not None:
     txt_files = []
@@ -62,8 +65,7 @@ if files is not None:
         if '.txt' in file.name: 
             txt_files.append(file)
             txt_names.append(file.name)
-        if ('.xls' in file.name) or ('.xlsx' in file.name):
-            excel_files.append(file)
+    
 
     unique_txt = set(txt_names)
     count_unique_txt = len(unique_txt)
@@ -77,20 +79,13 @@ if files is not None:
         
         df = df1.merge((df2.merge(df3, on = POSITION)), on = POSITION)
   
-        mask = [SAMPLE_NAME, POSITION, GENE_NAME, GROUP, CQ, TM]
-
-        if len(excel_files) > 0:
-            for excel_file in excel_files:
-                df = pd.read_excel(excel_file)
-                df.rename(columns={
-                    "SampleTubeID": SAMPLE_NAME,
-                    "Test Name": GENE_NAME,
-                    "SampleTubePositionID": POSITION}, inplace=True)
-                df_excel= pd.concat([df_excel, df])
-
-            mask = [SAMPLE_NAME, POSITION, GENE_NAME, GROUP, CQ, TM, COMMENTS]
-
         is_empty = False
+
+       
+      
+       
+ 
+
     else:
         st.info(f"""
             Hi, dear user !\n
@@ -98,7 +93,6 @@ if files is not None:
               - High Resolution Melting.txt
               - Quality_detection.txt
               - TM_calling.txt
-            And all the excels ('xls', 'xlsx') you want.
         """, icon='🤖')
 
         st.markdown(f"""
@@ -106,21 +100,27 @@ if files is not None:
                 {"" if count_unique_txt == 0 else unique_txt}</i></p>
             """, unsafe_allow_html=True)
 
- 
-
+       
     if is_empty is False:
-        df_combined = pd.concat([df, df_excel])
-        df_combined = df_combined[mask].fillna('')
-        df_final = sortDataFrameBy(df_combined, POSITION)
+        df.rename(columns={
+            GENE_NAME: TEST_NAME,
+            SAMPLE_NAME: SAMPLE_TUBE_ID,
+            POSITION: SAMPLE_TUBE_POSITION_ID}, inplace=True)
+
+        mask = [TEST_NAME, SAMPLE_TUBE_POSITION_ID, SAMPLE_TUBE_ID, GROUP, CQ, TM]
+
+        df = df[mask].fillna('')
+        
+        df_final = sortDataFrameBy(df, SAMPLE_TUBE_POSITION_ID)
 
         st.markdown("<h5>&#128196; Data</h5>", unsafe_allow_html=True)
         st.dataframe(df_final.reset_index(drop=True))
 
-        csv = convert_df(df_final)
+        csv = convert_df(df)
 
         st.download_button(
             label="📥 Download Table",
             data=csv,
             file_name='data_combined.csv',
             mime='text/csv',
-)
+        )
